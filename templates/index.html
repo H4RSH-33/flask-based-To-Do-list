@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal To-Do</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        :root {
+            --bg: #f9f9f9;
+            --text: #333;
+            --card: #fff;
+            --accent: #4cafef;
+            --done: #a0a0a0;
+        }
+        body.dark {
+            --bg: #1e1e1e;
+            --text: #f1f1f1;
+            --card: #2a2a2a;
+            --accent: #90caf9;
+            --done: #777;
+        }
+        .container {
+            max-width: 400px;
+            margin: 60px auto;
+            background-color: var(--card);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--accent);
+            border-radius: 5px;
+            outline: none;
+        }
+        button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            margin-left: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--card);
+            padding: 8px;
+            margin-bottom: 6px;
+            border-radius: 5px;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+        li.done {
+            color: var(--done);
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .checkbox.checked {
+            background-color: var(--accent);
+            color: white;
+        }
+        .task-text {
+            flex: 1;
+        }
+        .delete-btn {
+            background: none;
+            border: none;
+            color: red;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    <div class="container">
+        <h1>My To-Do List</h1>
+
+        <form action="/add" method="post">
+            <input type="text" name="task" placeholder="Enter a task" required>
+            <button type="submit">Add</button>
+        </form>
+
+        <ul id="task-list">
+            {% for task in tasks %}
+            <li class="task {% if task.completed %}done{% endif %}" data-completed="{{ task.completed }}">
+                <div class="checkbox {% if task.completed %}checked{% endif %}" onclick="location.href='/toggle/{{ loop.index0 }}'">
+                    {% if task.completed %}✔{% endif %}
+                </div>
+                <span class="task-text">{{ task.text }}</span>
+                <a href="/delete/{{ loop.index0 }}" class="delete-btn">❌</a>
+            </li>
+            {% else %}
+            <li>No tasks yet!</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script>
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme === "dark") {
+                document.body.classList.add("dark");
+                document.querySelector(".theme-toggle").textContent = "☀️";
+            }
+        });
+
+        function toggleTheme() {
+            document.body.classList.toggle("dark");
+            const isDark = document.body.classList.contains("dark");
+            localStorage.setItem("theme", isDark ? "dark" : "light");
+            document.querySelector(".theme-toggle").textContent = isDark ? "☀️" : "🌙";
+        }
+    </script>
+</body>
+</html>
