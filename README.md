@@ -1,4 +1,5 @@
 📝 Flask To-Do Web App
+---
 A minimal task management web application built with Python and Flask.
 Supports adding, completing, and deleting tasks with in-memory storage and a simple Dark/Light mode toggle.
 Part of my 6-week mini-project series to sharpen python skills.
